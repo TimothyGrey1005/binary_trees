@@ -1,26 +1,52 @@
 #include "binary_trees.h"
 
+size_t depth(const binary_tree_t *tree);
+
 /**
- * binary_trees_ancestor - finds lowest common ancestor of two nodes.
- * @first: pointer to first node.
- * @second: pointer to second node.
- *
- * Return: If no common ancestor return NULL, else return common ancestor.
+ * binary_trees_ancestor - A function that calculates the lowest common ancestor.
+ * @first: ptr to first node.
+ * @second: ptr to second node.
+ * Return: Results
  */
 binary_tree_t *binary_trees_ancestor(const binary_tree_t *first,
 		const binary_tree_t *second)
 {
-	binary_tree_t *mom, *pop;
+	size_t first_depth, second_depth;
 
-	if (!first || !second)
+	if (first == NULL || second == NULL)
 		return (NULL);
 	if (first == second)
 		return ((binary_tree_t *)first);
+	if (first->parent == second->parent)
+		return ((binary_tree_t *)first->parent);
+	if (first == second->parent)
+		return ((binary_tree_t *)first);
+	if (first->parent == second)
+		return ((binary_tree_t *)second);
 
-	mom = first->parent, pop = second->parent;
-	if (first == pop || !mom || (!mom->parent && pop))
-		return (binary_trees_ancestor(first, pop));
-	else if (mom == second || !pop || (!pop->parent && mom))
-		return (binary_trees_ancestor(mom, second));
-	return (binary_trees_ancestor(mom, pop));
+	for (first_depth = depth(first); first_depth > 1; first_depth--)
+		first = first->parent;
+	for (second_depth = depth(second); second_depth > 1; second_depth--)
+		second = second->parent;
+
+	if (first == second)
+		return ((binary_tree_t *)first);
+	if (first->parent == second->parent)
+		return ((binary_tree_t *)first->parent);
+	if (first == second->parent)
+		return ((binary_tree_t *)first);
+	if (first->parent == second)
+		return ((binary_tree_t *)second);
+	else
+		return (NULL);
+}
+
+/**
+ * depth - A function to measures the depth of a node.
+ * @tree: ptr to node to measure the depth.
+ * Return: Results
+ */
+size_t depth(const binary_tree_t *tree)
+{
+	return ((tree->parent != NULL) ? 1 + depth(tree->parent) : 0);
 }
